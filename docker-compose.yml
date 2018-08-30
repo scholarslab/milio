@@ -1,9 +1,9 @@
 version: '2'
 
 services:
-   db:
+   milio_db:
      image: mysql:5.7
-     container_name: milio_mysql
+     container_name: milio_db
      volumes:
        - ./db_data:/var/lib/mysql
 
@@ -23,7 +23,7 @@ services:
      build:
        context: .
      depends_on:
-       - db
+       - milio_db
      image: milio:0.4
      container_name: milio_omeka
      volumes:
