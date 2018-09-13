@@ -1,47 +1,47 @@
 version: '2'
 
 services:
-   milio_db:
-     image: mysql:5.7
-     container_name: milio_db
-     volumes:
-       - ./db_data:/var/lib/mysql
+  milio_db:
+    image: mysql:5.7
+    container_name: milio_db
+    volumes:
+      - ./db_data:/var/lib/mysql
 
-       # This line is only used for the initial start up (the very first time
-       # docker-compose is run or if there is no data in the 'db_data' folder
-       - ./initial_sql/neatline_milio.sql:/docker-entrypoint-initdb.d/milio_initial.sql
-     restart: always
-     environment:
-       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-       MYSQL_DATABASE: ${MYSQL_DATABASE}
-       MYSQL_USER: ${MYSQL_USER}
-       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-     labels:
-       - "traefik.enable=false"
+      # This line is only used for the initial start up (the very first time
+      # docker-compose is run or if there is no data in the 'db_data' folder
+      - ./initial_sql/neatline_milio.sql:/docker-entrypoint-initdb.d/milio_initial.sql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    labels:
+      - "traefik.enable=false"
 
-   milio_omeka:
-     build:
-       context: .
-     depends_on:
-       - milio_db
-     image: milio:0.4
-     container_name: milio_omeka
-     volumes:
-       - ./omeka:/var/www/html/
-     restart: always
-     environment:
-       OMEKA_DB_HOST: ${OMEKA_DB_HOST}
-       OMEKA_DB_USER: ${MYSQL_USER}
-       OMEKA_DB_PASSWORD: ${MYSQL_PASSWORD}
-       OMEKA_TABLE_PREFIX: ${OMEKA_TABLE_PREFIX}
-     expose:
-       - "80"
-     labels:
-       - "traefik.docker.network=thenetwork"
-       - "traefik.enable=true"
-       - "traefik.port=80"
-       - "traefik.backend=milio_omeka"
-       - "traefik.frontend.rule=Host:cnhi-milio.nursing.virginia.edu"
+  milio_omeka:
+    build:
+      context: .
+    depends_on:
+      - milio_db
+    image: milio:0.4
+    container_name: milio_omeka
+    volumes:
+      - ./omeka:/var/www/html/
+    restart: always
+    environment:
+      OMEKA_DB_HOST: ${OMEKA_DB_HOST}
+      OMEKA_DB_USER: ${MYSQL_USER}
+      OMEKA_DB_PASSWORD: ${MYSQL_PASSWORD}
+      OMEKA_TABLE_PREFIX: ${OMEKA_TABLE_PREFIX}
+    expose:
+      - "80"
+    labels:
+      - "traefik.docker.network=thenetwork"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=milio_omeka"
+      - "traefik.frontend.rule=Host:cnhi-milio.nursing.virginia.edu"
 
 networks:
   default:
